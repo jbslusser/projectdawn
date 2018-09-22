@@ -3,19 +3,80 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class cs_PlayerMovement : MonoBehaviour {
-	// class for player's movement
+	// class for player's movement and camera
+
+	private CharacterController myController;
+	private Vector3 moveDirection;
+	private Camera myCamera;
+	private GameObject myCameraPivot;
+
+	[Header("Movement Settings")]
 
 	public float WalkSpeed;
 	public float SprintSpeed;
+	public float JumpSpeed;
+	public float Gravity;
+	public bool isSprinting;
 
-	private CharacterController myController;
+
+	[Header("Camera Settings")]
+
+	public float CameraSensitivity;
+	public float CameraZoom;
+	public float CameraZoomSpeed;
+	public float CameraZoomMin;
+	public float CameraZoomMax;
+	public float CameraYOffset;
+	public float CameraXOffset;
+	public float CameraFOV;
 
 	void Start(){
+		
 		myController = GetComponent<CharacterController> ();
-	} // end start()
+		moveDirection = Vector3.zero;
+		isSprinting = false;
+
+
+		myCamera = GetComponentInChildren<Camera> ();
+		myCameraPivot = transform.Find ("CameraPivot").gameObject;
+
+		CameraZoom = -3.0f;
+
+
+	} // end start
 
 	void Update(){
-		
+
+		// movement
+
+		moveDirection = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
+
+		if (Input.GetKey (KeyCode.LeftShift)) {
+			isSprinting = true;
+		} else {
+			isSprinting = false;
+		}
+
+		if (isSprinting) {
+			myController.Move (moveDirection * Time.deltaTime * SprintSpeed);
+		} else {
+			myController.Move (moveDirection * Time.deltaTime * WalkSpeed);
+		}
+
+		// camera
+
+		CameraZoom += Input.GetAxis ("Mouse ScrollWheel") * CameraZoomSpeed;
+
+		if (CameraZoom > CameraZoomMin) {
+			CameraZoom = CameraZoomMin;
+		}
+		if (CameraZoom < CameraZoomMax) {
+			CameraZoom = CameraZoomMax;
+		}
+
+		myCamera.transform.localPosition = new Vector3 (CameraXOffset, CameraYOffset, CameraZoom);
+		myCamera.fieldOfView = CameraFOV;
+
 	} // end update
 
 } // end player movement class
