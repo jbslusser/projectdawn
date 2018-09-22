@@ -29,11 +29,14 @@ public class cs_PlayerMovement : MonoBehaviour {
 	public float CameraYOffset;
 	public float CameraXOffset;
 	public float CameraFOV;
+	private float mouseX;
+	private float mouseY;
 
 	void Start(){
 		
 		myController = GetComponent<CharacterController> ();
 		moveDirection = Vector3.zero;
+
 		isSprinting = false;
 
 
@@ -50,6 +53,8 @@ public class cs_PlayerMovement : MonoBehaviour {
 		// movement
 
 		moveDirection = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
+		moveDirection = myCamera.transform.TransformDirection (moveDirection);
+		moveDirection.y = 0.0f;
 
 		if (Input.GetKey (KeyCode.LeftShift)) {
 			isSprinting = true;
@@ -62,6 +67,7 @@ public class cs_PlayerMovement : MonoBehaviour {
 		} else {
 			myController.Move (moveDirection * Time.deltaTime * WalkSpeed);
 		}
+			
 
 		// camera
 
@@ -76,7 +82,16 @@ public class cs_PlayerMovement : MonoBehaviour {
 
 		myCamera.transform.localPosition = new Vector3 (CameraXOffset, CameraYOffset, CameraZoom);
 		myCamera.fieldOfView = CameraFOV;
+		myCamera.transform.LookAt (myCameraPivot.transform);
 
+		if (Input.GetMouseButton (1)) {
+			mouseX += Input.GetAxis ("Mouse X") * CameraSensitivity;
+			mouseY -= Input.GetAxis ("Mouse Y") * CameraSensitivity;
+			mouseY = Mathf.Clamp (mouseY, -30, 70);
+			myCameraPivot.transform.localRotation = Quaternion.Euler (mouseY, 0, 0);
+			gameObject.transform.rotation = Quaternion.Euler (0, mouseX, 0);
+		}
+			
 	} // end update
 
 } // end player movement class

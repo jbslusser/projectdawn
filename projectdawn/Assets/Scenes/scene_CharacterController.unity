@@ -660,7 +660,7 @@ MonoBehaviour:
   JumpSpeed: 0
   Gravity: 0
   isSprinting: 0
-  CameraSensitivity: 0
+  CameraSensitivity: 5
   CameraZoom: -3
   CameraZoomSpeed: 1
   CameraZoomMin: -3
@@ -668,6 +668,8 @@ MonoBehaviour:
   CameraYOffset: 1
   CameraXOffset: 0
   CameraFOV: 90
+  mouseX: 0
+  mouseY: 0
 --- !u!143 &1299851815
 CharacterController:
   m_ObjectHideFlags: 0
